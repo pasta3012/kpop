@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HUY</title>
+   <!-- icon -->
+    <link rel="icon" href="https://i.pinimg.com/1200x/34/ac/1f/34ac1f408c5bb3d4017cc6b8e7f45a88.jpg" type="image/gif" sizes="16x16">
+     <!-- description -->
+     <meta name="description" content="Kho ảnh của huy">
+     <!-- keywords -->
+     <meta name="keywords" content="rosie, wonyoung">
+     <!-- author -->
+     <meta name="author" content="pasta">
+
+     <!-- thumbnail -->
+        <meta property="og:image" content="https://i.pinimg.com/736x/7f/96/5c/7f965c145f48d21701299e0900032399.jpg">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .gallery-img {
+      width: 100%;
+      height: auto;
+    }
+
+    .zoomed {
+      width: 100%; 
+      height: auto;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      background-color: rgba(0, 0, 0, 0.5);
+      transition: width 0.5s, height 0.5s;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2 style="color: #08b4ff">Jang Wonyoung</h2>
+  <pre>
+    <code>Huy đẹp trai</code>
+  </pre>
+  <div id="image-gallery" class="row">
+  </div>
+  <hr>
+
+ <br><br>
+</div>
+ <a href='http://www.freevisitorcounters.com'>Freevisitorcounters.com</a> <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=37481d28d5bba586011162d3aa2445953fd9bb3a'></script>
+<script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1166964/t/0"></script>
+<script>
+  
+  async function loadListImageFormUrl () {
+    const url = 'https://raw.githubusercontent.com/pasta3012/wonyoung/refs/heads/main/img.txt';
+    const response = await fetch(url);
+    var data = await response.text();
+    var listImages = data.split('\n');
+    listImages= listImages.filter(function (el) {
+      return el != "";
+    });
+    return listImages;
+  }
+   function populateGallery(imagesArray) {
+    var galleryContainer = document.getElementById('image-gallery');
+    galleryContainer.innerHTML = ''; 
+
+    imagesArray.forEach(function(imageUrl) {
+      var imgElement = document.createElement('img');
+      imgElement.src = imageUrl;
+
+      imgElement.classList.add('gallery-img');
+
+      var colDiv = document.createElement('div');
+      colDiv.classList.add('col-md-4', 'mb-3');
+      colDiv.appendChild(imgElement);
+
+      galleryContainer.appendChild(colDiv);
+
+      imgElement.addEventListener("click", function () {
+        if (imgElement.classList.contains("zoomed")) {
+          imgElement.classList.remove("zoomed");
+        } else {
+          imgElement.classList.add("zoomed");
+        }
+      });
+    });
+  }
+
+  async function main() {
+    var listImages = await loadListImageFormUrl();
+    populateGallery(listImages);
+  }
+  main();
+</script>
+
+</body>
+</html>
