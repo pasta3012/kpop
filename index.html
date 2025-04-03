@@ -7,7 +7,7 @@
    <!-- icon -->
     <link rel="icon" href="https://i.pinimg.com/1200x/34/ac/1f/34ac1f408c5bb3d4017cc6b8e7f45a88.jpg" type="image/gif" sizes="16x16">
      <!-- description -->
-     <meta name="description" content="Kho ảnh của huy">
+     <meta name="description" content="QUANGHUY">
      <!-- keywords -->
      <meta name="keywords" content="rosie, wonyoung">
      <!-- author -->
@@ -23,16 +23,21 @@
     }
 
     .zoomed {
-      width: 100%; 
-      height: auto;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-      background-color: rgba(0, 0, 0, 0.5);
-      transition: width 0.5s, height 0.5s;
-    }
+  max-width: 100vw;
+  max-height: 100vh;
+  width: auto;
+  height: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  object-fit: contain;
+  background: none; /* Xóa nền */
+  padding: 0; /* Xóa padding */
+  border-radius: 0; /* Xóa bo góc */
+}
+
   </style>
 </head>
 <body>
