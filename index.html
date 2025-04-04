@@ -3,102 +3,185 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KPOP</title>
-   <!-- icon -->
-    <link rel="icon" href="https://i.pinimg.com/1200x/34/ac/1f/34ac1f408c5bb3d4017cc6b8e7f45a88.jpg" type="image/gif" sizes="16x16">
-     <!-- description -->
-     <meta name="description" content="QUANGHUY">
-     <!-- keywords -->
-     <meta name="keywords" content="rosie, wonyoung">
-     <!-- author -->
-     <meta name="author" content="pasta">
+  <title>KPOP Gallery</title>
 
-     <!-- thumbnail -->
-        <meta property="og:image" content="https://i.pinimg.com/1200x/34/ac/1f/34ac1f408c5bb3d4017cc6b8e7f45a88.jpg">
+  <!-- Favicon -->
+  <link rel="icon" href="https://pbs.twimg.com/media/Gnk05iLWUAAyz4o?format=jpg&name=large" type="image/gif" sizes="16x16">
+
+  <!-- SEO Meta -->
+  <meta name="description" content="QUANGHUY">
+  <meta name="keywords" content="kpop, rosé, wonyoung">
+  <meta name="author" content="pasta">
+  <meta property="og:image" content="https://pbs.twimg.com/media/Gnk05iLWUAAyz4o?format=jpg&name=large">
+
+  <!-- Bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
   <style>
     .gallery-img {
       width: 100%;
       height: auto;
+      cursor: pointer;
+      transition: transform 0.3s ease;
     }
 
-    .zoomed {
-  max-width: 100vw;
-  max-height: 100vh;
-  width: auto;
-  height: auto;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  object-fit: contain;
-  background: none; /* Xóa nền */
-  padding: 0; /* Xóa padding */
-  border-radius: 0; /* Xóa bo góc */
-}
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 10px;
+    }
+
+    .close-lightbox {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 40px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      margin: 5px;
+      padding: 8px 12px;
+      border: none;
+      background-color: #08b4ff;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .pagination button:disabled {
+      background-color: gray;
+      cursor: not-allowed;
+    }
 
   </style>
 </head>
+
 <body>
-
 <div class="container">
-  <h2 style="color: #08b4ff">KPOP</h2>
-  <pre>
-    <code>PASTA AKA QUANGHUY</code>
-  </pre>
-  <div id="image-gallery" class="row">
+  <h2 style="color: #08b4ff">KPOP Gallery</h2>
+
+  <!-- Loading -->
+  <div id="loading" style="text-align:center; padding: 20px;">
+    <div class="spinner-border text-primary"></div>
+    <p>Đang tải ảnh...</p>
   </div>
-  <hr>
 
- <br><br>
+  <div id="image-gallery" class="row"></div>
+
+  <!-- Phân trang -->
+  <div class="pagination">
+    <button id="prevPage" onclick="prevPage()" disabled>← Trang trước</button>
+    <span id="pageNumber">1</span>
+    <button id="nextPage" onclick="nextPage()">Trang sau →</button>
+  </div>
 </div>
- <a href='http://www.freevisitorcounters.com'>Freevisitorcounters.com</a> <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=37481d28d5bba586011162d3aa2445953fd9bb3a'></script>
-<script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1166964/t/0"></script>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+  <img id="lightbox-img" src="" alt="Lightbox Image">
+</div>
+
+<!-- Script -->
 <script>
-  
-  async function loadListImageFormUrl () {
+  let imagesArray = [];
+  let currentPage = 1;
+  const itemsPerPage = 9;
+
+  async function loadImages() {
     const url = 'https://raw.githubusercontent.com/pasta3012/wonyoung/refs/heads/main/img.txt';
-    const response = await fetch(url);
-    var data = await response.text();
-    var listImages = data.split('\n');
-    listImages= listImages.filter(function (el) {
-      return el != "";
-    });
-    return listImages;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Không thể tải danh sách ảnh");
+      const data = await response.text();
+      imagesArray = data.split('\n').filter(el => el.trim() !== "");
+      
+      renderGallery();
+    } catch (error) {
+      console.error("Lỗi khi tải ảnh:", error);
+      alert("Đã xảy ra lỗi khi tải ảnh.");
+    } finally {
+      document.getElementById("loading").style.display = "none";
+    }
   }
-   function populateGallery(imagesArray) {
-    var galleryContainer = document.getElementById('image-gallery');
-    galleryContainer.innerHTML = ''; 
 
-    imagesArray.forEach(function(imageUrl) {
-      var imgElement = document.createElement('img');
+  function renderGallery() {
+    const galleryContainer = document.getElementById('image-gallery');
+    galleryContainer.innerHTML = '';
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedImages = imagesArray.slice(startIndex, startIndex + itemsPerPage);
+
+    paginatedImages.forEach(imageUrl => {
+      const imgElement = document.createElement('img');
       imgElement.src = imageUrl;
-
+      imgElement.alt = "KPOP Image";
       imgElement.classList.add('gallery-img');
 
-      var colDiv = document.createElement('div');
+      imgElement.addEventListener("click", () => openLightbox(imageUrl));
+
+      const colDiv = document.createElement('div');
       colDiv.classList.add('col-md-4', 'mb-3');
       colDiv.appendChild(imgElement);
-
       galleryContainer.appendChild(colDiv);
-
-      imgElement.addEventListener("click", function () {
-        if (imgElement.classList.contains("zoomed")) {
-          imgElement.classList.remove("zoomed");
-        } else {
-          imgElement.classList.add("zoomed");
-        }
-      });
     });
+
+    updatePagination();
   }
 
-  async function main() {
-    var listImages = await loadListImageFormUrl();
-    populateGallery(listImages);
+  function updatePagination() {
+    document.getElementById("pageNumber").innerText = currentPage;
+    document.getElementById("prevPage").disabled = currentPage === 1;
+    document.getElementById("nextPage").disabled = currentPage * itemsPerPage >= imagesArray.length;
   }
-  main();
+
+  function nextPage() {
+    if (currentPage * itemsPerPage < imagesArray.length) {
+      currentPage++;
+      renderGallery();
+    }
+  }
+
+  function prevPage() {
+    if (currentPage > 1) {
+      currentPage--;
+      renderGallery();
+    }
+  }
+
+  function openLightbox(imageUrl) {
+    document.getElementById("lightbox-img").src = imageUrl;
+    document.getElementById("lightbox").style.display = "flex";
+  }
+
+  function closeLightbox() {
+    document.getElementById("lightbox").style.display = "none";
+  }
+
+  loadImages();
 </script>
-
 </body>
 </html>
