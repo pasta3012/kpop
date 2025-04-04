@@ -54,6 +54,23 @@
       cursor: pointer;
     }
 
+    .next-prev-buttons {
+      position: absolute;
+      top: 50%;
+      z-index: 10000;
+      color: white;
+      font-size: 30px;
+      cursor: pointer;
+    }
+
+    .next-button {
+      right: 10px;
+    }
+
+    .prev-button {
+      left: 10px;
+    }
+
     /* Pagination */
     .pagination {
       display: flex;
@@ -76,6 +93,21 @@
       cursor: not-allowed;
     }
 
+    /* Footer */
+    footer {
+      background-color: #08b4ff;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      margin-top: 50px;
+    }
+    footer a {
+      color: white;
+      text-decoration: none;
+    }
+    footer .author-info {
+      font-size: 16px;
+    }
   </style>
 </head>
 
@@ -102,14 +134,24 @@
 <!-- Lightbox -->
 <div class="lightbox" id="lightbox">
   <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+  <span class="prev-button next-prev-buttons" onclick="changeImage(-1)">&#10094;</span>
   <img id="lightbox-img" src="" alt="Lightbox Image">
+  <span class="next-button next-prev-buttons" onclick="changeImage(1)">&#10095;</span>
 </div>
+
+<!-- Footer with Author Info -->
+<footer>
+  <div class="author-info">
+    <p><strong>Chủ sở hữu trang web:</strong> <span style="color: #fff;">Pasta (Quang Huy)</span></p>  
+  </div>
+</footer>
 
 <!-- Script -->
 <script>
   let imagesArray = [];
   let currentPage = 1;
-  const itemsPerPage = 9;
+  const itemsPerPage = 6;
+  let currentImageIndex = 0;
 
   async function loadImages() {
     const url = 'https://raw.githubusercontent.com/pasta3012/wonyoung/refs/heads/main/img.txt';
@@ -118,7 +160,7 @@
       if (!response.ok) throw new Error("Không thể tải danh sách ảnh");
       const data = await response.text();
       imagesArray = data.split('\n').filter(el => el.trim() !== "");
-      
+
       renderGallery();
     } catch (error) {
       console.error("Lỗi khi tải ảnh:", error);
@@ -135,13 +177,13 @@
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedImages = imagesArray.slice(startIndex, startIndex + itemsPerPage);
 
-    paginatedImages.forEach(imageUrl => {
+    paginatedImages.forEach((imageUrl, index) => {
       const imgElement = document.createElement('img');
       imgElement.src = imageUrl;
       imgElement.alt = "KPOP Image";
       imgElement.classList.add('gallery-img');
-
-      imgElement.addEventListener("click", () => openLightbox(imageUrl));
+      
+      imgElement.addEventListener("click", () => openLightbox(imageUrl, startIndex + index));
 
       const colDiv = document.createElement('div');
       colDiv.classList.add('col-md-4', 'mb-3');
@@ -172,13 +214,23 @@
     }
   }
 
-  function openLightbox(imageUrl) {
+  function openLightbox(imageUrl, index) {
+    currentImageIndex = index;
     document.getElementById("lightbox-img").src = imageUrl;
     document.getElementById("lightbox").style.display = "flex";
   }
 
   function closeLightbox() {
     document.getElementById("lightbox").style.display = "none";
+  }
+
+  function changeImage(direction) {
+    currentImageIndex += direction;
+    if (currentImageIndex < 0) currentImageIndex = imagesArray.length - 1;
+    if (currentImageIndex >= imagesArray.length) currentImageIndex = 0;
+
+    const newImageUrl = imagesArray[currentImageIndex];
+    document.getElementById("lightbox-img").src = newImageUrl;
   }
 
   loadImages();
