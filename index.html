@@ -1,30 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KPOP Gallery</title>
-
-  <!-- Favicon -->
-  <link rel="icon" href="https://pbs.twimg.com/media/Gnk05iLWUAAyz4o?format=jpg&name=large" type="image/gif" sizes="16x16">
-
-  <!-- SEO Meta -->
-  <meta name="description" content="QUANGHUY">
-  <meta name="keywords" content="kpop, rosé, wonyoung">
-  <meta name="author" content="pasta">
+  <title>KPOP Gallery - Bộ sưu tập ảnh thần tượng Hàn Quốc</title>
+  <meta name="description" content="Bộ sưu tập ảnh chất lượng cao các thần tượng KPOP">
+  <meta name="keywords" content="kpop, blackpink, rosé, ive, wonyoung, twice, bts, hình ảnh idol">
+  <meta name="author" content="Pasta (Quang Huy)">
   <meta property="og:image" content="https://pbs.twimg.com/media/Gnk05iLWUAAyz4o?format=jpg&name=large">
 
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Favicon -->
+  <link rel="icon" href="https://pbs.twimg.com/media/Gnk05iLWUAAyz4o?format=jpg&name=large" type="image/jpeg">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
   <style>
+    :root {
+      --primary-color: #08b4ff;
+      --dark-bg: #121212;
+      --dark-card: #1e1e1e;
+    }
+    
+    body {
+      transition: background-color 0.3s ease;
+    }
+    
+    .dark-mode {
+      background-color: var(--dark-bg);
+      color: #f8f9fa;
+    }
+    
     .gallery-img {
       width: 100%;
-      height: auto;
+      height: 250px;
+      object-fit: cover;
       cursor: pointer;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 8px;
     }
-
+    
+    .gallery-img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .card {
+      border: none;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      background-color: transparent;
+      margin-bottom: 20px;
+    }
+    
+    .dark-mode .card {
+      background-color: var(--dark-card);
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    
+    /* Loading skeleton */
+    .skeleton {
+      animation: skeleton-loading 1s linear infinite alternate;
+      border-radius: 8px;
+    }
+    
+    @keyframes skeleton-loading {
+      0% { background-color: hsl(200, 20%, 80%); }
+      100% { background-color: hsl(200, 20%, 95%); }
+    }
+    
+    .skeleton-img {
+      width: 100%;
+      height: 250px;
+      margin-bottom: 10px;
+    }
+    
     /* Lightbox */
     .lightbox {
       display: none;
@@ -33,169 +90,289 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.9);
       justify-content: center;
       align-items: center;
       z-index: 9999;
+      backdrop-filter: blur(5px);
     }
-
-    .lightbox img {
+    
+    .lightbox-content {
+      position: relative;
       max-width: 90%;
       max-height: 90%;
-      border-radius: 10px;
+      text-align: center;
     }
-
+    
+    .lightbox img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+    
     .close-lightbox {
       position: absolute;
-      top: 20px;
-      right: 30px;
+      top: -40px;
+      right: -10px;
       font-size: 40px;
       color: #fff;
       cursor: pointer;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
+    
     .next-prev-buttons {
       position: absolute;
       top: 50%;
+      transform: translateY(-50%);
       z-index: 10000;
       color: white;
       font-size: 30px;
       cursor: pointer;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
+    
     .next-button {
-      right: 10px;
+      right: 20px;
     }
-
+    
     .prev-button {
-      left: 10px;
+      left: 20px;
     }
-
+    
     /* Pagination */
     .pagination {
       display: flex;
       justify-content: center;
-      margin-top: 20px;
+      margin-top: 30px;
+      flex-wrap: wrap;
     }
-
+    
     .pagination button {
       margin: 5px;
-      padding: 8px 12px;
+      padding: 8px 15px;
       border: none;
-      background-color: #08b4ff;
+      background-color: var(--primary-color);
       color: white;
       cursor: pointer;
       border-radius: 5px;
+      transition: background-color 0.3s;
     }
-
+    
+    .pagination button:hover:not(:disabled) {
+      background-color: #0694d3;
+    }
+    
     .pagination button:disabled {
-      background-color: gray;
+      background-color: #6c757d;
       cursor: not-allowed;
     }
-
-    /* Footer */
-    footer {
-      background-color: #08b4ff;
-      padding: 20px;
-      color: white;
-      text-align: center;
-      margin-top: 50px;
+    
+    .page-info {
+      display: flex;
+      align-items: center;
+      margin: 0 15px;
     }
-    footer a {
-      color: white;
-      text-decoration: none;
-    }
-    footer .author-info {
-      font-size: 16px;
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .gallery-img {
+        height: 200px;
+      }
+      
+      .skeleton-img {
+        height: 200px;
+      }
+      
+      .lightbox img {
+        max-height: 70vh;
+      }
     }
   </style>
 </head>
 
 <body>
-<div class="container">
-  <h2 style="color: #08b4ff">KPOP Gallery</h2>
+<div class="container py-4">
+  <header class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 m-0" style="color: var(--primary-color)">
+      <i class="bi bi-camera"></i> KPOP Gallery
+    </h1>
+    <div>
+      <button id="darkModeToggle" class="btn btn-outline-secondary">
+        <i class="bi bi-moon"></i>
+      </button>
+    </div>
+  </header>
 
   <!-- Loading -->
-  <div id="loading" style="text-align:center; padding: 20px;">
-    <div class="spinner-border text-primary"></div>
-    <p>Đang tải ảnh...</p>
+  <div id="loading" class="text-center py-4">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+    <p class="mt-3">Đang tải ảnh...</p>
   </div>
 
-  <div id="image-gallery" class="row"></div>
+  <!-- Skeleton Loading -->
+  <div id="skeleton-loading" class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <div class="skeleton skeleton-img"></div>
+      </div>
+    </div>
+    <!-- Repeat skeleton items 8 more times -->
+  </div>
 
-  <!-- Phân trang -->
+  <!-- Image Gallery -->
+  <div id="image-gallery" class="row" style="display: none;"></div>
+
+  <!-- Pagination -->
   <div class="pagination">
-    <button id="prevPage" onclick="prevPage()" disabled>← Trang trước</button>
-    <span id="pageNumber">1</span>
-    <button id="nextPage" onclick="nextPage()">Trang sau →</button>
+    <button id="firstPage" class="btn btn-outline-primary" onclick="goToPage(1)" disabled>
+      <i class="bi bi-chevron-double-left"></i>
+    </button>
+    <button id="prevPage" onclick="prevPage()" disabled>
+      <i class="bi bi-chevron-left"></i> Trước
+    </button>
+    <div class="page-info">
+      Trang <span id="currentPage">1</span>/<span id="totalPages">1</span>
+    </div>
+    <button id="nextPage" onclick="nextPage()">
+      Sau <i class="bi bi-chevron-right"></i>
+    </button>
+    <button id="lastPage" class="btn btn-outline-primary" onclick="goToLastPage()">
+      <i class="bi bi-chevron-double-right"></i>
+    </button>
   </div>
 </div>
 
 <!-- Lightbox -->
 <div class="lightbox" id="lightbox">
-  <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
-  <span class="prev-button next-prev-buttons" onclick="changeImage(-1)">&#10094;</span>
-  <img id="lightbox-img" src="" alt="Lightbox Image">
-  <span class="next-button next-prev-buttons" onclick="changeImage(1)">&#10095;</span>
+  <div class="lightbox-content">
+    <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+    <span class="prev-button next-prev-buttons" onclick="changeImage(-1)">&#10094;</span>
+    <img id="lightbox-img" src="" alt="Ảnh KPOP" loading="eager">
+    <span class="next-button next-prev-buttons" onclick="changeImage(1)">&#10095;</span>
+    <div class="mt-3">
+      <button class="btn btn-sm btn-primary" onclick="shareImage()">
+        <i class="bi bi-share"></i> Chia sẻ
+      </button>
+      <button class="btn btn-sm btn-success ms-2" onclick="downloadImage()">
+        <i class="bi bi-download"></i> Tải xuống
+      </button>
+    </div>
+  </div>
 </div>
-<!-- Script -->
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
+  // Global variables
   let imagesArray = [];
   let currentPage = 1;
   const itemsPerPage = 9;
   let currentImageIndex = 0;
+  let totalPages = 1;
 
+  // DOM elements
+  const loadingElement = document.getElementById('loading');
+  const skeletonLoading = document.getElementById('skeleton-loading');
+  const galleryContainer = document.getElementById('image-gallery');
+  const darkModeToggle = document.getElementById('darkModeToggle');
+
+  // Initialize the gallery
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check for saved dark mode preference
+    if (localStorage.getItem('darkMode') === 'enabled') {
+      document.body.classList.add('dark-mode');
+      darkModeToggle.innerHTML = '<i class="bi bi-sun"></i>';
+    }
+    
+    loadImages();
+  });
+
+  // Load images from GitHub
   async function loadImages() {
-    const url = 'https://raw.githubusercontent.com/pasta3012/wonyoung/refs/heads/main/img.txt';
+    const url = 'https://raw.githubusercontent.com/pasta3012/wonyoung/main/img.txt';
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error("Không thể tải danh sách ảnh");
       const data = await response.text();
       imagesArray = data.split('\n').filter(el => el.trim() !== "");
-
+      
+      // Calculate total pages
+      totalPages = Math.ceil(imagesArray.length / itemsPerPage);
+      document.getElementById('totalPages').textContent = totalPages;
+      
       renderGallery();
     } catch (error) {
       console.error("Lỗi khi tải ảnh:", error);
-      alert("Đã xảy ra lỗi khi tải ảnh.");
+      showError("Đã xảy ra lỗi khi tải ảnh. Vui lòng thử lại sau.");
     } finally {
-      document.getElementById("loading").style.display = "none";
+      loadingElement.style.display = "none";
+      skeletonLoading.style.display = "none";
+      galleryContainer.style.display = "flex";
     }
   }
 
+  // Render gallery based on current page
   function renderGallery() {
-    const galleryContainer = document.getElementById('image-gallery');
     galleryContainer.innerHTML = '';
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedImages = imagesArray.slice(startIndex, startIndex + itemsPerPage);
 
     paginatedImages.forEach((imageUrl, index) => {
+      const cardDiv = document.createElement('div');
+      cardDiv.className = 'col-md-4 mb-4';
+      
+      const card = document.createElement('div');
+      card.className = 'card h-100';
+      
       const imgElement = document.createElement('img');
       imgElement.src = imageUrl;
-      imgElement.alt = "KPOP Image";
-      imgElement.classList.add('gallery-img');
+      imgElement.alt = "Ảnh KPOP";
+      imgElement.className = 'gallery-img';
+      imgElement.loading = "lazy";
       
+      // Add click event to open lightbox
       imgElement.addEventListener("click", () => openLightbox(imageUrl, startIndex + index));
-
-      const colDiv = document.createElement('div');
-      colDiv.classList.add('col-md-4', 'mb-3');
-      colDiv.appendChild(imgElement);
-      galleryContainer.appendChild(colDiv);
+      
+      card.appendChild(imgElement);
+      cardDiv.appendChild(card);
+      galleryContainer.appendChild(cardDiv);
     });
 
     updatePagination();
   }
 
+  // Update pagination controls
   function updatePagination() {
-    document.getElementById("pageNumber").innerText = currentPage;
+    document.getElementById("currentPage").textContent = currentPage;
+    document.getElementById("totalPages").textContent = Math.ceil(imagesArray.length / itemsPerPage);
+    
     document.getElementById("prevPage").disabled = currentPage === 1;
     document.getElementById("nextPage").disabled = currentPage * itemsPerPage >= imagesArray.length;
+    document.getElementById("firstPage").disabled = currentPage === 1;
+    document.getElementById("lastPage").disabled = currentPage === Math.ceil(imagesArray.length / itemsPerPage);
   }
 
+  // Pagination functions
   function nextPage() {
     if (currentPage * itemsPerPage < imagesArray.length) {
       currentPage++;
       renderGallery();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -203,29 +380,124 @@
     if (currentPage > 1) {
       currentPage--;
       renderGallery();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
+  function goToPage(page) {
+    if (page >= 1 && page <= Math.ceil(imagesArray.length / itemsPerPage)) {
+      currentPage = page;
+      renderGallery();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function goToLastPage() {
+    currentPage = Math.ceil(imagesArray.length / itemsPerPage);
+    renderGallery();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Lightbox functions
   function openLightbox(imageUrl, index) {
     currentImageIndex = index;
     document.getElementById("lightbox-img").src = imageUrl;
     document.getElementById("lightbox").style.display = "flex";
+    document.body.style.overflow = "hidden";
   }
 
   function closeLightbox() {
     document.getElementById("lightbox").style.display = "none";
+    document.body.style.overflow = "auto";
   }
 
   function changeImage(direction) {
     currentImageIndex += direction;
+    
+    // Circular navigation
     if (currentImageIndex < 0) currentImageIndex = imagesArray.length - 1;
     if (currentImageIndex >= imagesArray.length) currentImageIndex = 0;
-
+    
     const newImageUrl = imagesArray[currentImageIndex];
     document.getElementById("lightbox-img").src = newImageUrl;
   }
 
-  loadImages();
+  // Keyboard navigation for lightbox
+  document.addEventListener('keydown', function(e) {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox.style.display === 'flex') {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      } else if (e.key === 'ArrowLeft') {
+        changeImage(-1);
+      } else if (e.key === 'ArrowRight') {
+        changeImage(1);
+      }
+    }
+  });
+
+  // Dark mode toggle
+  darkModeToggle.addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+    
+    if (document.body.classList.contains('dark-mode')) {
+      localStorage.setItem('darkMode', 'enabled');
+      darkModeToggle.innerHTML = '<i class="bi bi-sun"></i>';
+    } else {
+      localStorage.setItem('darkMode', 'disabled');
+      darkModeToggle.innerHTML = '<i class="bi bi-moon"></i>';
+    }
+  });
+
+  // Share image function
+  function shareImage() {
+    const currentImage = imagesArray[currentImageIndex];
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'Ảnh KPOP',
+        text: 'Xem ảnh KPOP chất lượng cao',
+        url: currentImage
+      }).catch(err => {
+        console.log('Lỗi khi chia sẻ:', err);
+        copyToClipboard(currentImage);
+      });
+    } else {
+      copyToClipboard(currentImage);
+    }
+  }
+
+  // Copy to clipboard as fallback
+  function copyToClipboard(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    
+    alert('Đã sao chép link ảnh vào clipboard!');
+  }
+
+  // Download image function
+  function downloadImage() {
+    const currentImage = imagesArray[currentImageIndex];
+    const link = document.createElement('a');
+    link.href = currentImage;
+    link.download = 'kpop-image.jpg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // Show error message
+  function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-danger text-center';
+    errorDiv.textContent = message;
+    galleryContainer.innerHTML = '';
+    galleryContainer.appendChild(errorDiv);
+  }
 </script>
 </body>
 </html>
